@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+echo -e "\e[104m Compiling program... \e[0m\e[33m"
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 "$@" -o btree;
+[ "$(echo -n $?)" == "0" ] && echo -e "\e[0m\e[104m Running executable [./btree]... \e[0m" && ./btree
