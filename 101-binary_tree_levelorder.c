@@ -85,7 +85,7 @@ void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 	int n = 0;
 	binary_tree_t *current = NULL;
 
-	if (tree != NULL)
+	if ((tree != NULL) && (func != NULL))
 	{
 		enqueue_item(&queue_head, &queue_tail, &n, (void *)tree);
 		while (n > 0)
