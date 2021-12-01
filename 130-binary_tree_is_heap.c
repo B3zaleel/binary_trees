@@ -133,7 +133,7 @@ void binary_heap_checker(const binary_tree_t *tree, int max, int *is_max_heap)
 {
 	if (tree != NULL)
 	{
-		if (tree->n < max)
+		if (tree->n <= max)
 		{
 			binary_heap_checker(tree->left, tree->n, is_max_heap);
 			binary_heap_checker(tree->right, tree->n, is_max_heap);
