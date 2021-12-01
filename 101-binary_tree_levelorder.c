@@ -91,18 +91,21 @@ void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 		while (n > 0)
 		{
 			current = queue_head;
-			func(current->n);
-			if (((current->parent) != NULL) && (current->parent->left != NULL))
+			if (current->parent != NULL)
 			{
-				enqueue_item(
-					&queue_head, &queue_tail, &n, (void *)(current->parent->left)
-				);
-			}
-			if (((current->parent) != NULL) && (current->parent->right != NULL))
-			{
-				enqueue_item(
-					&queue_head, &queue_tail, &n, (void *)(current->parent->right)
-				);
+				func(current->parent->n);
+				if (current->parent->left != NULL)
+				{
+					enqueue_item(
+						&queue_head, &queue_tail, &n, (void *)(current->parent->left)
+					);
+				}
+				if (current->parent->right != NULL)
+				{
+					enqueue_item(
+						&queue_head, &queue_tail, &n, (void *)(current->parent->right)
+					);
+				}
 			}
 			dequeue_item(&queue_head, &queue_tail, &n);
 		}
