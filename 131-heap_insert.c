@@ -1,13 +1,13 @@
 #include "binary_trees.h"
 
 /**
- * enqueue_item - Adds an item to a queue.
+ * enqueue_item_3 - Adds an item to a queue.
  * @queue_h: A pointer to the queue's head.
  * @queue_t: A pointer to the queue's tail.
  * @n: A pointer to the queue's size value.
  * @item: The item to add to the queue.
  */
-void enqueue_item(heap_t **queue_h, heap_t **queue_t,
+void enqueue_item_3(heap_t **queue_h, heap_t **queue_t,
 	int *n, void *item)
 {
 	heap_t *new_node;
@@ -33,14 +33,14 @@ void enqueue_item(heap_t **queue_h, heap_t **queue_t,
 }
 
 /**
- * dequeue_item - Removes an item from a queue.
+ * dequeue_item_3 - Removes an item from a queue.
  * @queue_h: A pointer to the queue's head.
  * @queue_t: A pointer to the queue's tail.
  * @n: A pointer to the queue's size value.
  *
  * Return: The value of the removed queue.
  */
-heap_t *dequeue_item(heap_t **queue_h,
+heap_t *dequeue_item_3(heap_t **queue_h,
 	heap_t **queue_t, int *n)
 {
 	heap_t *tmp0;
@@ -88,7 +88,7 @@ heap_t *get_insert_position(const heap_t *root)
 
 	if (root != NULL)
 	{
-		enqueue_item(&head, &tail, &n, (void *)root);
+		enqueue_item_3(&head, &tail, &n, (void *)root);
 		while (n > 0)
 		{
 			current = head;
@@ -96,10 +96,10 @@ heap_t *get_insert_position(const heap_t *root)
 			{
 				if (current->parent->left != NULL)
 				{
-					enqueue_item(&head, &tail, &n, (void *)(current->parent->left));
+					enqueue_item_3(&head, &tail, &n, (void *)(current->parent->left));
 					if (current->parent->right != NULL)
 					{
-						enqueue_item(&head, &tail, &n, (void *)(current->parent->right));
+						enqueue_item_3(&head, &tail, &n, (void *)(current->parent->right));
 					}
 					else
 					{
@@ -113,10 +113,10 @@ heap_t *get_insert_position(const heap_t *root)
 					break;
 				}
 			}
-			dequeue_item(&head, &tail, &n);
+			dequeue_item_3(&head, &tail, &n);
 		}
 		while (n > 0)
-			dequeue_item(&head, &tail, &n);
+			dequeue_item_3(&head, &tail, &n);
 	}
 	return (parent_node);
 }
@@ -180,9 +180,13 @@ heap_t *heap_insert(heap_t **root, int value)
 	if (root != NULL)
 	{
 		parent = get_insert_position(*root);
-		new_node = binary_tree_node(parent, value);
+		new_node = malloc(sizeof(heap_t));
 		if (new_node == NULL)
 			return (new_node);
+		new_node->left = NULL;
+		new_node->right = NULL;
+		new_node->parent = parent;
+		new_node->n = value;
 		if (parent == NULL)
 		{
 			*root = new_node;

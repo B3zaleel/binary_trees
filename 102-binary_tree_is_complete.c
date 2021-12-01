@@ -1,13 +1,13 @@
 #include "binary_trees.h"
 
 /**
- * enqueue_item - Adds an item to a queue.
+ * enqueue_item_1 - Adds an item to a queue.
  * @queue_h: A pointer to the queue's head.
  * @queue_t: A pointer to the queue's tail.
  * @n: A pointer to the queue's size value.
  * @item: The item to add to the queue.
  */
-void enqueue_item(binary_tree_t **queue_h, binary_tree_t **queue_t,
+void enqueue_item_1(binary_tree_t **queue_h, binary_tree_t **queue_t,
 	int *n, void *item)
 {
 	binary_tree_t *new_node;
@@ -33,14 +33,14 @@ void enqueue_item(binary_tree_t **queue_h, binary_tree_t **queue_t,
 }
 
 /**
- * dequeue_item - Removes an item from a queue.
+ * dequeue_item_1 - Removes an item from a queue.
  * @queue_h: A pointer to the queue's head.
  * @queue_t: A pointer to the queue's tail.
  * @n: A pointer to the queue's size value.
  *
  * Return: The value of the removed queue.
  */
-binary_tree_t *dequeue_item(binary_tree_t **queue_h,
+binary_tree_t *dequeue_item_1(binary_tree_t **queue_h,
 	binary_tree_t **queue_t, int *n)
 {
 	binary_tree_t *tmp0;
@@ -90,7 +90,7 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 	if (tree != NULL)
 	{
 		is_complete = 1;
-		enqueue_item(&queue_head, &queue_tail, &n, (void *)tree);
+		enqueue_item_1(&queue_head, &queue_tail, &n, (void *)tree);
 		while (n > 0)
 		{
 			current = queue_head;
@@ -107,18 +107,18 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 				}
 				else if (current->parent != NULL)
 				{
-					enqueue_item(
+					enqueue_item_1(
 						&queue_head, &queue_tail, &n, (void *)(current->parent->left)
 					);
-					enqueue_item(
+					enqueue_item_1(
 						&queue_head, &queue_tail, &n, (void *)(current->parent->right)
 					);
 				}
 			}
-			dequeue_item(&queue_head, &queue_tail, &n);
+			dequeue_item_1(&queue_head, &queue_tail, &n);
 		}
 		while (n > 0)
-			dequeue_item(&queue_head, &queue_tail, &n);
+			dequeue_item_1(&queue_head, &queue_tail, &n);
 	}
 	return (is_complete);
 }
