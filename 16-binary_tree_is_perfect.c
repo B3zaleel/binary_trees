@@ -35,7 +35,7 @@ void tree_stats(const binary_tree_t *tree, size_t n,
  * binary_tree_is_perfect - Checks if a binary tree is perfect.
  * @tree: The binary tree.
  *
- * Return: The 1 if the tree is perfect, otherwise 0.
+ * Return: 1 if the tree is perfect, otherwise 0.
  */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {

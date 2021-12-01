@@ -28,7 +28,7 @@ void is_tree_full(const binary_tree_t *tree, int *is_full)
  * binary_tree_is_full - Checks if a binary tree is full.
  * @tree: The binary tree.
  *
- * Return: The 1 if the tree is full, otherwise 0.
+ * Return: 1 if the tree is full, otherwise 0.
  */
 int binary_tree_is_full(const binary_tree_t *tree)
 {
