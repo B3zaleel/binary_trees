@@ -11,7 +11,6 @@ void enqueue_item_4(heap_t **queue_h, heap_t **queue_t,
 	int *n, void *item)
 {
 	heap_t *new_node;
-	heap_t *node = (heap_t *)item;
 
 	if ((queue_h != NULL) && (queue_t != NULL))
 	{
@@ -20,8 +19,8 @@ void enqueue_item_4(heap_t **queue_h, heap_t **queue_t,
 			return;
 		new_node->left = *queue_t;
 		new_node->right = NULL;
-		new_node->n = (node != NULL ? node->n : -1);
-		new_node->parent = node;
+		new_node->n = (item != NULL ? ((heap_t *)item)->n : -1);
+		new_node->parent = (heap_t *)item;
 		if (*queue_h == NULL)
 			*queue_h = new_node;
 		if (*queue_t != NULL)
@@ -175,19 +174,19 @@ int heap_extract(heap_t **root)
 		node_r = node->right;
 		value = node->n;
 		tmp = get_last_heap_node(node);
-		*root = tmp;
-		if (tmp != NULL)
+		*root = ((tmp != NULL) && (tmp->parent != NULL) ? tmp : NULL);
+		if ((tmp != NULL) && (tmp->parent != NULL))
 		{
 			if (tmp->parent->left == tmp)
 				tmp->parent->left = NULL;
 			if (tmp->parent->right == tmp)
 				tmp->parent->right = NULL;
 			tmp->parent = NULL;
-			tmp->left = node_l;
-			tmp->right = node_r;
-			if (node_l != NULL)
+			tmp->left = (node_l != tmp ? node_l : NULL);
+			tmp->right = (node_r != tmp ? node_r : NULL);
+			if ((node_l != NULL) && (node_l != tmp))
 				node_l->parent = tmp;
-			if (node_r != NULL)
+			if ((node_r != NULL) && (node_r != tmp))
 				node_r->parent = tmp;
 			while (tmp != NULL)
 			{
