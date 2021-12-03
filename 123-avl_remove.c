@@ -1,103 +1,69 @@
 #include "binary_trees.h"
-#define DELETE_TREE_NODE_WITH_CHILDREN_PARTS()                             \
-	{                                                                        \
-		new_node = (*node)->right;                                             \
-		while ((new_node != NULL) && (new_node->left != NULL))                 \
-			new_node = new_node->left;                                           \
-		if ((new_node != NULL) && (new_node == (*node)->right))                \
-		{                                                                      \
-			*parent = (*node)->parent;                                           \
-			new_node->parent = (*node)->parent, new_node->left = (*node)->left;  \
-			if ((*node)->left != NULL)                                           \
-				(*node)->left->parent = new_node;                                  \
-			if (((*node)->parent != NULL) && ((*node)->parent->left == *node))   \
-				(*node)->parent->left = new_node;                                  \
-			if (((*node)->parent != NULL) && ((*node)->parent->right == *node))  \
-				(*node)->parent->right = new_node;                                 \
-		}                                                                      \
-		else if (new_node != NULL)                                             \
-		{                                                                      \
-			*parent = new_node->parent;                                          \
-			new_node->parent->left = new_node->right;                            \
-			if (new_node->right != NULL)                                         \
-				new_node->right->parent = new_node->parent;                        \
-			new_node->parent = (*node)->parent;                                  \
-			new_node->left = (*node)->left, new_node->right = (*node)->right;    \
-			(*node)->left->parent = new_node, (*node)->right->parent = new_node; \
-			if (((*node)->parent != NULL) && ((*node)->parent->left == *node))   \
-				(*node)->parent->left = new_node;                                  \
-			if (((*node)->parent != NULL) && ((*node)->parent->right == *node))  \
-				(*node)->parent->right = new_node;                                 \
-		}                                                                      \
-	}
 
 /**
- * find_node_1 - Finds a node with a given value in a binary search tree.
- * @root: The root of the binary search tree.
- * @value: The value of the node.
+ * smallest - gets the smallest node
+ * @node: tree to query
  *
- * Return: A pointer to the found node, otherwise NULL.
+ * Return: node with the smallest value
  */
-avl_t *find_node_1(avl_t *root, int value)
+static bst_t *smallest(bst_t *node)
 {
-	avl_t *node = NULL;
-
-	if (root != NULL)
-	{
-		if (root->left != NULL)
-			node = root->left->parent;
-		if ((node == NULL) && (root->right != NULL))
-			node = root->right->parent;
-		while (node != NULL)
-		{
-			if (node->n < value)
-				node = node->right;
-			else if (node->n > value)
-				node = node->left;
-			else
-				break;
-		}
-	}
-	return (node);
+	if (node == NULL)
+		return (NULL);
+	if (node->left == NULL)
+		return (node);
+	return (smallest(node->left));
 }
 
 /**
- * delete_tree_node - Deletes a node in a binary search tree and replaces \
- * it with its inorder successor, otherwise predecessor.
- * @node: A pointer to the node in the binary search tree.
- * @parent: A pointer to the node of possible imbalance.
+ * remove_node - removes a value from a binary search tree
+ * @root: tree to query
+ * @value: value of node to remove
  *
- * Return: A pointer to the node's inorder successor node or predecessor.
+ * Return: the parent
  */
-avl_t *delete_tree_node(avl_t **node, avl_t **parent)
+static bst_t *remove_node(bst_t **root, int value)
 {
-	avl_t *new_node;
+	bst_t *node = *root, *parent = NULL, **plink, *new, *src = NULL;
 
-	*parent = (*node)->parent;
-	if (((*node)->left == NULL) && ((*node)->right == NULL))
+	while (node != NULL)
 	{
-		if (((*node)->parent != NULL) && ((*node)->parent->left == *node))
-			(*node)->parent->left = NULL;
-		if (((*node)->parent != NULL) && ((*node)->parent->right == *node))
-			(*node)->parent->right = NULL;
+		if (node->n == value)
+		{
+			parent = node->parent, src = parent;
+			plink = parent == NULL ? root : parent->n > node->n ? &parent->left
+																													: &parent->right;
+			if (node->right == NULL && node->left == NULL)
+				*plink = NULL;
+			else if (node->right == NULL)
+				*plink = node->left, node->left->parent = node->parent;
+			else if (node->left == NULL)
+				*plink = node->right, node->right->parent = node->parent;
+			else
+			{
+				new = smallest(node->right);
+				if (new == node->right)
+					*plink = new, new->parent = node->parent, src = node->parent,
+					new->left = node->left, new->left->parent = new;
+				else
+				{
+					new->parent->left = new->right, src = new->parent;
+					if (new->right)
+						new->right->parent = new->parent;
+					*plink = new, new->parent = parent, new->left = node->left;
+					if (new->left)
+						new->left->parent = new;
+					new->right = node->right;
+					if (new->right)
+						new->right->parent = new;
+				}
+			}
+			free(node);
+			break;
+		}
+		node = value > node->n ? node->right : node->left;
 	}
-	else if (((*node)->left != NULL) ^ ((*node)->right != NULL))
-	{
-		*parent = (*node)->parent;
-		new_node = ((*node)->left != NULL ? (*node)->left : (*node)->right);
-		if (((*node)->parent != NULL) && ((*node)->parent->left == *node))
-			(*node)->parent->left = new_node;
-		else if (((*node)->parent != NULL) && ((*node)->parent->right == *node))
-			(*node)->parent->right = new_node;
-		new_node->parent = (*node)->parent;
-	}
-	else
-	{
-		DELETE_TREE_NODE_WITH_CHILDREN_PARTS();
-	}
-	if ((node != NULL) && (*node != NULL))
-		free(*node);
-	return (new_node);
+	return (src);
 }
 
 /**
@@ -157,16 +123,10 @@ avl_t *avl_remove(avl_t *root, int value)
 
 	if (new_root != NULL)
 	{
-		node = find_node_1(root, value);
-		if ((node != NULL) && (node->n == value))
-		{
-			new_node = delete_tree_node(&node, &parent);
-			if (new_node != NULL)
-			{
-				new_root = (new_node->parent == NULL ? new_node : new_root);
-				adjust_balance_1(&new_root, parent);
-			}
-		}
+		(void)node;
+		(void)new_node;
+		parent = remove_node(&new_root, value);
+		adjust_balance_1(&new_root, parent);
 	}
 	return (new_root);
 }
