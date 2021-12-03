@@ -78,23 +78,23 @@ void adjust_balance(avl_t **root, avl_t *node)
 	{
 		left_height = tree_height_2(cur->left);
 		right_height = tree_height_2(cur->right);
-		balance = right_height - left_height;
+		balance = left_height - right_height;
 		if (!((balance >= -1) && (balance <= 1)))
 		{
-			if ((balance == -2) && (node->n < cur->left->n))
+			if ((balance == 2) && (node->n < cur->left->n))
 			{
 				new_root = binary_tree_rotate_right(cur);
 			}
-			else if ((balance == -2) && (node->n > cur->left->n))
+			else if ((balance == 2) && (node->n > cur->left->n))
 			{
 				cur->left = binary_tree_rotate_left(cur->left);
 				new_root = binary_tree_rotate_right(cur);
 			}
-			else if ((balance == 2) && (node->n > cur->right->n))
+			else if ((balance == -2) && (node->n > cur->right->n))
 			{
 				new_root = binary_tree_rotate_left(cur);
 			}
-			else if ((balance == 2) && (node->n < cur->right->n))
+			else if ((balance == -2) && (node->n < cur->right->n))
 			{
 				cur->right = binary_tree_rotate_right(cur->right);
 				new_root = binary_tree_rotate_left(cur);
